@@ -1,0 +1,5 @@
+.qodo
+# Ocultar archivos con credenciales
+.env
+secret.txt
+config.json

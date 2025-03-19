@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spinning Class Provida Fitness</title>
+    <style>
+        body {
+            text-align: center;
+        }
+        .container {
+            position: relative;
+            display: inline-block;
+        }
+        .seat {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .available {
+            background-color: rgb(64, 177, 64);
+        }
+        .sold {
+            background-color: red;
+        }
+        .admin-panel {
+            margin-top: 20px;
+        }
+        /* Estilos adicionales para el panel de administrador */
+        #adminLogin, #adminControls {
+        margin-bottom: 15px;
+        }
+    
+        #adminPassword {
+        padding: 5px;
+        margin-right: 5px;
+        }
+    
+        .admin-panel button {
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+    
+        .admin-panel button:hover {
+        background-color: #45a049;
+    }
+    
+    /* Muestra la información sobre el asiento al pasar el ratón */
+    .seat:hover::after {
+        content: attr(data-seat);
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 12px;
+    }
+
+
+    </style>
+</head>
+<body>
+    <h1>Reserve your seat</h1>
+    <div class="container" id="seatContainer">
+        <img src="Imagen.jpg" alt="Mapa de bicicletas" style="max-width: 100%; height: auto;">
+        <div class="seat available" data-seat="A1" style="top: 10%; left: 10%;"></div>
+        <div class="seat available" data-seat="A2" style="top: 10%; left: 20%;"></div>
+        <div class="seat available" data-seat="A3" style="top: 10%; left: 30%;"></div>
+        <div class="seat available" data-seat="A4" style="top: 10%; left: 38%;"></div>
+        <div class="seat available" data-seat="A5" style="top: 10%; left: 55%;"></div>
+        <div class="seat available" data-seat="A6" style="top: 10%; left: 65%;"></div>
+        <div class="seat available" data-seat="A7" style="top: 10%; left: 74%;"></div>
+        <div class="seat available" data-seat="A8" style="top: 10%; left: 84%;"></div>
+        <div class="seat available" data-seat="B1" style="top: 25%; left: 5%;"></div>
+        <div class="seat available" data-seat="B2" style="top: 25%; left: 15%;"></div>
+        <div class="seat available" data-seat="B3" style="top: 25%; left: 25%;"></div>
+        <div class="seat available" data-seat="B4" style="top: 25%; left: 34%;"></div>
+        <div class="seat available" data-seat="B5" style="top: 25%; left: 42%;"></div>
+        <div class="seat available" data-seat="B6" style="top: 25%; left: 50%;"></div>
+        <div class="seat available" data-seat="B7" style="top: 25%; left: 60%;"></div>
+        <div class="seat available" data-seat="B8" style="top: 25%; left: 70%;"></div>
+        <div class="seat available" data-seat="B9" style="top: 25%; left: 80%;"></div>
+        <div class="seat available" data-seat="B10" style="top: 25%; left: 90%;"></div>
+        <div class="seat available" data-seat="C1" style="top: 40%; left: 10%;"></div>
+        <div class="seat available" data-seat="C2" style="top: 40%; left: 20%;"></div>
+        <div class="seat available" data-seat="C3" style="top: 40%; left: 29%;"></div>
+        <div class="seat available" data-seat="C4" style="top: 40%; left: 39%;"></div>
+        <div class="seat available" data-seat="C5" style="top: 40%; left: 48%;"></div>
+        <div class="seat available" data-seat="C6" style="top: 40%; left: 56%;"></div>
+        <div class="seat available" data-seat="C7" style="top: 40%; left: 65%;"></div>
+        <div class="seat available" data-seat="C8" style="top: 40%; left: 74%;"></div>
+        <div class="seat available" data-seat="C9" style="top: 40%; left: 84%;"></div>
+        <div class="seat available" data-seat="D1" style="top: 57%; left: 5%;"></div>
+        <div class="seat available" data-seat="D2" style="top: 57%; left: 14%;"></div>
+        <div class="seat available" data-seat="D3" style="top: 57%; left: 23%;"></div>
+        <div class="seat available" data-seat="D4" style="top: 57%; left: 33%;"></div>
+        <div class="seat available" data-seat="D5" style="top: 57%; left: 41%;"></div>
+        <div class="seat available" data-seat="D6" style="top: 57%; left: 50%;"></div>
+        <div class="seat available" data-seat="D7" style="top: 57%; left: 60%;"></div>
+        <div class="seat available" data-seat="D8" style="top: 57%; left: 70%;"></div>
+        <div class="seat available" data-seat="D9" style="top: 57%; left: 80%;"></div>
+        <div class="seat available" data-seat="E1" style="top: 74%; left: 30%;"></div>
+        <div class="seat available" data-seat="E2" style="top: 74%; left: 40%;"></div>
+        <div class="seat available" data-seat="E3" style="top: 74%; left: 48%;"></div>
+        <div class="seat available" data-seat="E4" style="top: 74%; left: 56%;"></div>
+        <div class="seat available" data-seat="E5" style="top: 74%; left: 65%;"></div>
+    </div>
+    <form id="reservaForm">
+        <input type="text" id="nombre" placeholder="Nombre">
+        <input type="date" id="fecha" required>
+        <input type="time" id="hora">
+        <button type="submit">Reservar</button>
+    </form>
+    <div class="admin-panel">
+        <h2>Panel de Administración</h2>
+        <!-- El JavaScript insertará aquí los controles de login -->
+        <button onclick="toggleSeats()">Cambiar Disponibilidad</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyDWbjpouES6NSIptvcu22OeMHehv_m04zU",
+          authDomain: "reservasapp-cb9aa.firebaseapp.com",
+          projectId: "reservasapp-cb9aa",
+          storageBucket: "reservasapp-cb9aa.firebasestorage.app",
+          messagingSenderId: "738284899402",
+          appId: "1:738284899402:web:a763b3c7c036ff01656ab3"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+
+
+        // Función para guardar una reserva en Firestore
+        async function guardarReserva() {
+        
+        // Capturar los valores del formulario
+        const nombre = document.getElementById("nombre").value;
+        const fecha = document.getElementById("fecha").value;
+        const hora = document.getElementById("hora").value;
+
+ 
+
+
+
+        // Validar que los campos no estén vacíos
+        if (!nombre || !fecha || !hora) {
+        alert("Todos los campos son obligatorios");
+        return;
+        }
+
+        try {
+        // Crear una referencia a la colección "reservas"
+        const reservasRef = collection(db, "reservas");
+
+        // Crear un nuevo documento con datos
+        await setDoc(doc(reservasRef), {
+            nombre: nombre,
+            fecha: fecha,
+            hora: hora
+        });
+
+        alert("✅ Reserva guardada correctamente");
+
+        } catch (error) {
+        console.error("❌ Error al guardar la reserva:", error);
+        alert("Ocurrió un error al guardar la reserva");
+        }
+        }
+
+        document.getElementById("reservaForm").addEventListener("submit", function(event) {
+         event.preventDefault(); // Evita que la página se recargue
+         guardarReserva();
+        });
+
+        document.getElementById("fecha").addEventListener("change", function(event){
+            event.preventDefault();
+            validarFecha();
+        })
+
+        // Conectar Firestore
+        const db = getFirestore(app);
+        window.db = db; // Esto permite usar la BD en otros scripts
+
+        console.log("🔥 Firebase conectado correctamente");
+      </script>
+      <script src =  "script.js" type="module"></script>
+</body>
+</html>
