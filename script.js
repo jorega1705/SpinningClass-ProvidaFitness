@@ -85,18 +85,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Crear elementos para login de administrador
         const loginContainer = document.createElement("div");
         loginContainer.innerHTML = `
-            <div id="adminLogin">
-                <input type="password" id="adminPassword" placeholder="Contraseña de administrador">
-                <button id="loginButton">Iniciar sesión</button>
-            </div>
-            <div id="adminControls" style="display: none;">
-                <p>Sesión de administrador activa</p>
+        <div id="adminLogin">
+            <input type="password" id="adminPassword" placeholder="Contraseña de administrador">
+            <button id="loginButton">Iniciar sesión</button>
+        </div>
+        <div id="adminControls" style="display: none;">
+            <p>Sesión de administrador activa</p>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                 <button id="logoutButton">Cerrar sesión</button>
-                <button id="resetButton" style="background-color: #f44336; margin-left: 10px;">Reiniciar reservas</button>
-                <hr>
-                <p><strong>Estado:</strong> Viendo reservas para <span id="currentSession"></span></p>
-            </div>
-        `;
+                <button id="resetButton" style="background-color: #f44336;">Reiniciar reservas</button>
+        </div>
+        <hr>
+        <p><strong>Estado:</strong> Viendo reservas para <span id="currentSession"></span></p>
+    </div>
+`;
         
         // Insertar elementos de login en el panel de administración
         adminPanel.innerHTML = '';
@@ -352,77 +354,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
     
-    // Función para programar el reinicio automático cada domingo a las 8:30
-    function setupAutoReset() {
-        // Verificar la hora actual y programar el próximo reinicio
-        const checkAndScheduleReset = () => {
-            const now = new Date();
-            const day = now.getDay(); // 0 = domingo
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            
-            // Si es domingo y son las 8:30, reiniciar todas las reservas
-            if (day === 0 && hour === 8 && minute === 30) {
-                resetAllReservations();
-            }
-            
-            // Calcular tiempo hasta el próximo domingo a las 8:30
-            const daysUntilNextSunday = day === 0 ? 7 : 7 - day;
-            const nextSunday = new Date(now);
-            nextSunday.setDate(now.getDate() + daysUntilNextSunday);
-            nextSunday.setHours(8, 30, 0, 0);
-            
-            // Si ya pasó la hora de reinicio de hoy, programar para el próximo domingo
-            if (day === 0 && (hour > 8 || (hour === 8 && minute > 30))) {
-                nextSunday.setDate(nextSunday.getDate() + 7);
-            }
-            
-            const timeUntilReset = nextSunday - now;
-            console.log(`Próximo reinicio programado en ${Math.floor(timeUntilReset / (1000 * 60 * 60))} horas.`);
-            
-            // Programar el próximo reinicio
-            setTimeout(resetAllReservations, timeUntilReset);
-        };
-        
-        // Función para reiniciar todas las reservas
-        const resetAllReservations = async () => {
-            try {
-                const days = ["martes", "jueves", "sabado", "domingo"];
-                const times = ["18:00", "08:00"];
-                
-                // Exportar y reiniciar cada combinación de día y hora
-                for (const day of days) {
-                    for (const time of times) {
-                        // Solo exportar y reiniciar las combinaciones válidas según el horario
-                        if ((day === "martes" || day === "jueves") && time === "18:00") {
-                            await exportReservationsToSheet(day, "1800");
-                            await setDoc(doc(reservasCollection, `asientos_${day}_1800`), {});
-                        } else if ((day === "sabado" || day === "domingo") && time === "08:00") {
-                            await exportReservationsToSheet(day, "0800");
-                            await setDoc(doc(reservasCollection, `asientos_${day}_0800`), {});
-                        }
-                    }
-                }
-                
-                console.log("✅ Reinicio automático completado");
-                
-                // Programar el próximo reinicio
-                checkAndScheduleReset();
-            } catch (error) {
-                console.error("Error en el reinicio automático:", error);
-                
-                // Intentar de nuevo en 5 minutos
-                setTimeout(resetAllReservations, 5 * 60 * 1000);
-            }
-        };
-        
-        // Iniciar el proceso de programación
-        checkAndScheduleReset();
-    }
-    
     // Inicializar componentes
     setupAdminLogin();
     setupDaySelector();
     await loadSeats();
-    setupAutoReset();
 });
