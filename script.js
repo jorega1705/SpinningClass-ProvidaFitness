@@ -24,18 +24,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     let currentDay = "martes"; // Día por defecto
     let currentTime = "18:00"; // Hora por defecto
     
-    // Referencia a la colección principal de reservas
-    const reservasCollection = collection(db, "reservas");
-    
     // Función para obtener la referencia al documento de asientos del día seleccionado
+    // Garantizamos un formato consistente para las referencias de documentos
     const getSeatsRef = () => {
         return doc(reservasCollection, `asientos_${currentDay}_${currentTime.replace(':', '')}`);
     };
     
+    // Referencia a la colección principal de reservas
+    const reservasCollection = collection(db, "reservas");
+    
     // Función para exportar las reservas antes de reiniciarlas
     async function exportReservationsToSheet(day, time) {
         try {
-            const seatsRef = doc(reservasCollection, `asientos_${day}_${time.replace(':', '')}`);
+            // Aseguramos un formato consistente para la hora
+            const formattedTime = time.replace(':', '');
+            const seatsRef = doc(reservasCollection, `asientos_${day}_${formattedTime}`);
             const seatDoc = await getDoc(seatsRef);
             
             if (!seatDoc.exists()) {
@@ -94,11 +97,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
                 <button id="logoutButton">Cerrar sesión</button>
                 <button id="resetButton" style="background-color: #f44336;">Reiniciar reservas</button>
+            </div>
+            <hr>
+            <p><strong>Estado:</strong> Viendo reservas para <span id="currentSession"></span></p>
+            <p id="databaseStatus"></p>
         </div>
-        <hr>
-        <p><strong>Estado:</strong> Viendo reservas para <span id="currentSession"></span></p>
-    </div>
-`;
+        `;
         
         // Insertar elementos de login en el panel de administración
         adminPanel.innerHTML = '';
@@ -106,8 +110,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         // Actualizar el texto de la sesión actual
         const updateSessionText = () => {
-            document.getElementById("currentSession").textContent = 
-                `${capitalizeFirstLetter(currentDay)} a las ${currentTime}`;
+            const element = document.getElementById("currentSession");
+            if (element) {
+                element.textContent = `${capitalizeFirstLetter(currentDay)} a las ${currentTime}`;
+            }
         };
 
         // Capitalizar primera letra
@@ -135,6 +141,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
                 
                 updateSessionText();
+                
+                // Verificar estado de la base de datos inmediatamente
+                checkDatabaseConnection();
                 
                 alert("✅ Sesión de administrador iniciada correctamente");
             } else {
@@ -167,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             try {
                 // Exportar primero
-                await exportReservationsToSheet(currentDay, currentTime.replace(':', ''));
+                await exportReservationsToSheet(currentDay, currentTime);
                 // Luego reiniciar
                 await setDoc(getSeatsRef(), {});
                 alert(`✅ Reservas reiniciadas para ${currentDay} a las ${currentTime}`);
@@ -176,6 +185,37 @@ document.addEventListener("DOMContentLoaded", async () => {
                 alert("❌ Error al reiniciar las reservas");
             }
         });
+    }
+    
+    // Función para verificar la conexión con la base de datos
+    async function checkDatabaseConnection() {
+        try {
+            // Intentar leer el documento actual
+            const seatsRef = getSeatsRef();
+            const docSnap = await getDoc(seatsRef);
+            
+            const statusElement = document.getElementById("databaseStatus");
+            if (statusElement) {
+                if (docSnap.exists()) {
+                    const seatsData = docSnap.data();
+                    const reservedCount = Object.keys(seatsData).length;
+                    statusElement.innerHTML = `✅ Conectado a Firebase: ${reservedCount} asientos reservados`;
+                    statusElement.style.color = "green";
+                } else {
+                    statusElement.innerHTML = "✅ Conectado a Firebase: No hay reservas en este día/hora";
+                    statusElement.style.color = "green";
+                }
+            }
+            return true;
+        } catch (error) {
+            console.error("Error al verificar conexión con Firebase:", error);
+            const statusElement = document.getElementById("databaseStatus");
+            if (statusElement) {
+                statusElement.innerHTML = "❌ Error de conexión con Firebase";
+                statusElement.style.color = "red";
+            }
+            return false;
+        }
     }
     
     // Función para configurar los selectores de día
@@ -199,38 +239,60 @@ document.addEventListener("DOMContentLoaded", async () => {
                 currentTime = button.getAttribute("data-time");
                 
                 // Actualizar el texto de la sesión si está el admin logueado
-                if (isAdmin && document.getElementById("currentSession")) {
-                    document.getElementById("currentSession").textContent = 
-                        `${currentDay.charAt(0).toUpperCase() + currentDay.slice(1)} a las ${currentTime}`;
+                if (isAdmin) {
+                    const element = document.getElementById("currentSession");
+                    if (element) {
+                        element.textContent = `${capitalizeFirstLetter(currentDay)} a las ${currentTime}`;
+                    }
+                    
+                    // Actualizar el estado de la base de datos
+                    checkDatabaseConnection();
                 }
                 
                 // Cargar los asientos para este día
                 await loadSeats();
             });
         });
+        
+        // Función auxiliar para capitalizar
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
     }
     
     // Función para cargar asientos de la base de datos
     async function loadSeats() {
-        const seatsRef = getSeatsRef();
-        
-        // Desuscribirse de la suscripción anterior
-        if (window.currentUnsubscribe) {
-            window.currentUnsubscribe();
-        }
-        
-        // Escuchar cambios en Firestore en tiempo real
-        window.currentUnsubscribe = onSnapshot(seatsRef, (docSnapshot) => {
-            let seatsData = {};
-            if (docSnapshot.exists()) {
-                seatsData = docSnapshot.data();
-            } else {
-                // Si el documento no existe, inicializarlo
-                setDoc(seatsRef, {});
+        try {
+            const seatsRef = getSeatsRef();
+            
+            // Desuscribirse de la suscripción anterior
+            if (window.currentUnsubscribe) {
+                window.currentUnsubscribe();
             }
             
-            renderSeats(seatsData);
-        });
+            console.log(`Cargando asientos para: ${currentDay} ${currentTime}`);
+            console.log(`Referencia del documento: asientos_${currentDay}_${currentTime.replace(':', '')}`);
+            
+            // Escuchar cambios en Firestore en tiempo real
+            window.currentUnsubscribe = onSnapshot(seatsRef, (docSnapshot) => {
+                let seatsData = {};
+                if (docSnapshot.exists()) {
+                    seatsData = docSnapshot.data();
+                    console.log(`Datos cargados: ${Object.keys(seatsData).length} asientos reservados`);
+                } else {
+                    // Si el documento no existe, inicializarlo
+                    console.log("Documento no existe, inicializando...");
+                    setDoc(seatsRef, {});
+                }
+                
+                renderSeats(seatsData);
+            }, (error) => {
+                console.error("Error al cargar asientos:", error);
+                alert("Error al cargar los asientos. Verifica tu conexión a internet.");
+            });
+        } catch (error) {
+            console.error("Error en loadSeats:", error);
+        }
     }
     
     // Función para renderizar los asientos en la pantalla
@@ -345,17 +407,45 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Limpiar el formulario
             document.getElementById("nombre").value = "";
             document.getElementById("telefono").value = "";
+            const selectedSeat = window.selectedSeat;
             window.selectedSeat = null;
             
-            alert(`✅ Asiento ${window.selectedSeat} reservado para ${nombre} correctamente.`);
+            alert(`✅ Asiento ${selectedSeat} reservado para ${nombre} correctamente.`);
         } catch (error) {
             console.error("Error al hacer la reserva:", error);
             alert("❌ Error al guardar la reserva. Por favor intenta de nuevo.");
         }
     });
     
+    // Botón para forzar la recarga de datos
+    if (isAdmin) {
+        const reloadButton = document.createElement("button");
+        reloadButton.textContent = "🔄 Forzar recarga de datos";
+        reloadButton.style.marginTop = "10px";
+        reloadButton.style.backgroundColor = "#4285F4";
+        reloadButton.addEventListener("click", async () => {
+            try {
+                await loadSeats();
+                alert("✅ Datos recargados correctamente");
+            } catch (error) {
+                console.error("Error al recargar datos:", error);
+                alert("❌ Error al recargar los datos");
+            }
+        });
+        
+        const adminControls = document.getElementById("adminControls");
+        if (adminControls) {
+            adminControls.appendChild(reloadButton);
+        }
+    }
+    
     // Inicializar componentes
     setupAdminLogin();
     setupDaySelector();
     await loadSeats();
+    
+    // Establecer un intervalo para verificar la conexión periódicamente (solo para admin)
+    if (isAdmin) {
+        setInterval(checkDatabaseConnection, 60000); // Cada minuto
+    }
 });
