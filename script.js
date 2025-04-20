@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const reservaForm = document.getElementById("reservaForm");
     const db = window.db;
     
+    
     // Variables globales
     let isAdmin = false;
     let currentDay = "martes"; // Día por defecto
@@ -280,9 +281,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     seatsData = docSnapshot.data();
                     console.log(`Datos cargados: ${Object.keys(seatsData).length} asientos reservados`);
                 } else {
-                    // Si el documento no existe, inicializarlo
-                    console.log("Documento no existe, inicializando...");
-                    setDoc(seatsRef, {});
+                    // Si el documento no existe, NO lo inicializamos automáticamente
+                    // Esto previene el reinicio de reservas
+                    console.log("Documento no existe, pero NO se inicializará automáticamente");
+                    // Eliminamos la inicialización automática: setDoc(seatsRef, {});
                 }
                 
                 renderSeats(seatsData);
@@ -341,7 +343,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Obtener el estado actual de los asientos
             const seatsRef = getSeatsRef();
             const seatDoc = await getDoc(seatsRef);
-            let seatsData = seatDoc.exists() ? seatDoc.data() : {};
+            let seatsData = {};
+            
+            if (seatDoc.exists()) {
+                seatsData = seatDoc.data();
+            }
     
             // Si el asiento ya está reservado, preguntar si desea liberarlo
             if (seatsData[seatNumber]) {
@@ -384,7 +390,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Obtener el estado actual de los asientos
             const seatsRef = getSeatsRef();
             const seatDoc = await getDoc(seatsRef);
-            let seatsData = seatDoc.exists() ? seatDoc.data() : {};
+            let seatsData = {};
+            
+            // Inicializamos el documento si no existe
+            if (seatDoc.exists()) {
+                seatsData = seatDoc.data();
+            }
             
             // Verificar que el asiento siga disponible
             if (seatsData[window.selectedSeat]) {
@@ -392,11 +403,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
             
-            // Guardar la información de la reserva
+            // Guardar la información de la reserva con hora local del usuario
+            const fechaLocal = new Date();
             seatsData[window.selectedSeat] = {
                 nombre: nombre,
                 telefono: telefono,
-                fechaReserva: new Date().toISOString(),
+                fechaReserva: fechaLocal.toISOString(),
+                fechaReservaLocal: fechaLocal.toLocaleString(), // Hora local formateada
                 dia: currentDay,
                 hora: currentTime
             };
