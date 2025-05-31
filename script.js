@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Mostrar solo A, B y C si es viernes a las 09:00
         if (currentDay === "viernes" && currentTime === "09:00") {
-            if (!/^A|B|C/.test(seatNumber)) {
+            if (!/^A|^B|^C/.test(seatNumber)) {
                 seat.style.display = "none";
                 return;
             } else {
