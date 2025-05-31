@@ -299,28 +299,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Función para renderizar los asientos en la pantalla
     function renderSeats(seatsData) {
-        document.querySelectorAll(".seat").forEach(seat => {
-            const seatNumber = seat.getAttribute("data-seat");
-            
-            // Actualizar la apariencia según el estado en la base de datos
-            if (seatsData[seatNumber]) {
-                seat.classList.remove("available");
-                seat.classList.add("sold");
-                
-                // Añadir el nombre del cliente al tooltip si existe
-                if (seatsData[seatNumber].nombre) {
-                    seat.setAttribute("title", `Reservado por: ${seatsData[seatNumber].nombre}`);
-                }
+    document.querySelectorAll(".seat").forEach(seat => {
+        const seatNumber = seat.getAttribute("data-seat");
+
+        // Mostrar solo A, B y C si es viernes a las 09:00
+        if (currentDay === "viernes" && currentTime === "09:00") {
+            if (!/^A|B|C/.test(seatNumber)) {
+                seat.style.display = "none";
+                return;
             } else {
-                seat.classList.remove("sold");
-                seat.classList.add("available");
-                seat.removeAttribute("title");
+                seat.style.display = "block";
             }
-            
-            // Configurar el cursor según el rol del usuario
-            seat.style.cursor = isAdmin ? "pointer" : "default";
-        });
-    }
+        } else {
+            seat.style.display = "block"; // Mostrar todas en otros días
+        }
+
+        // Mostrar estado (reservado o disponible)
+        if (seatsData[seatNumber]) {
+            seat.classList.remove("available");
+            seat.classList.add("sold");
+
+            // Mostrar quién reservó si hay nombre
+            if (seatsData[seatNumber].nombre) {
+                seat.setAttribute("title", `Reservado por: ${seatsData[seatNumber].nombre}`);
+            }
+        } else {
+            seat.classList.remove("sold");
+            seat.classList.add("available");
+            seat.removeAttribute("title");
+        }
+
+        // Estilo según si es admin
+        seat.style.cursor = isAdmin ? "pointer" : "default";
+    });
+}
+
 
     // Manejar clics en asientos - Solo funciona para administradores
     seatContainer.addEventListener("click", async (event) => {
