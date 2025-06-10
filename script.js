@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".seat").forEach(seat => {
         const seatNumber = seat.getAttribute("data-seat");
 
-        // Mostrar solo A, B y C si es viernes a las 09:00
+        // Mostrar solo A, B y C si es viernes a las 08:00
         if (currentDay === "viernes" && currentTime === "09:00") {
             if (!/^A|^B|^C/.test(seatNumber)) {
                 seat.style.display = "none";
