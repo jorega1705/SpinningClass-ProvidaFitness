@@ -1,0 +1,19 @@
+[1mdiff --git a/Imagen.jpg b/Imagen.jpg[m
+[1mindex 7f96df8..b7820ce 100644[m
+Binary files a/Imagen.jpg and b/Imagen.jpg differ
+[1mdiff --git a/index.html b/index.html[m
+[1mindex 3493493..bb9ebcb 100644[m
+[1m--- a/index.html[m
+[1m+++ b/index.html[m
+[36m@@ -254,8 +254,9 @@[m
+         <div class="seat available" data-seat="E8" style="top: 72%; left: 66.5%;"></div>[m
+         <div class="seat available" data-seat="E9" style="top: 72%; left: 75%;"></div>[m
+         <div class="seat available" data-seat="F1" style="top: 87%; left: 14%;"></div>[m
+[31m-        <div class="seat available" data-seat="F2" style="top: 87%; left: 62%;"></div>[m
+[31m-        <div class="seat available" data-seat="F3" style="top: 87%; left: 71%;"></div>[m
+[32m+[m[32m        <div class="seat available" data-seat="F2" style="top: 87%; left: 22%;"></div>[m
+[32m+[m[32m        <div class="seat available" data-seat="F3" style="top: 87%; left: 62%;"></div>[m
+[32m+[m[32m        <div class="seat available" data-seat="F4" style="top: 87%; left: 71%;"></div>[m
+     </div>[m
+     [m
+     <form id="reservaForm">[m
