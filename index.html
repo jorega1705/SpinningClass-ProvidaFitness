@@ -261,24 +261,293 @@
         </div>
     </div>
 
-    <!-- ===== SECCIÓN DE VIDEO ===== -->
-    <div class="video-section">
-        <h3>Master class with Kristina</h3>
-        <div class="video-container">
-            <video 
-                controls 
-                preload="metadata"
-                poster="assets/videos/KristinaSergio.jpg"
-                playsinline
-            >
-                <source src="assets/videos/KristinaGirodEvent.mp4" type="video/mp4">
-                <source src="assets/videos/KristinaGirodEvent.mp4" type="video/webm">
-                Tu navegador no soporta el elemento de video.
-            </video>
+   <!-- ===== SECCIÓN ANUNCIO NUEVA PLATAFORMA ===== -->
+<style>
+    /* Estilos adicionales para el anuncio */
+    .new-platform-section {
+        margin: 30px auto;
+        padding: 0;
+        max-width: 900px;
+    }
+    
+    .announcement-card {
+        background: linear-gradient(145deg, #0d1b2e 0%, #1a2942 100%);
+        border-radius: 30px;
+        padding: 40px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(200, 255, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .announcement-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+        border-color: #c8ff00;
+    }
+    
+    .announcement-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(200, 255, 0, 0.08) 0%, transparent 70%);
+        animation: announcement-pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes announcement-pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    .announcement-logo {
+        text-align: center;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .announcement-logo-text {
+        font-size: 42px;
+        font-weight: bold;
+        color: #c8ff00;
+        text-shadow: 0 0 20px rgba(200, 255, 0, 0.5);
+        letter-spacing: 2px;
+    }
+    
+    .announcement-logo-subtitle {
+        color: #fff;
+        font-size: 14px;
+        letter-spacing: 3px;
+        margin-top: 5px;
+    }
+    
+    .announcement-badge {
+        background: linear-gradient(135deg, #c8ff00 0%, #a8df00 100%);
+        color: #0a1628;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 16px;
+        display: inline-block;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 20px rgba(200, 255, 0, 0.4);
+        animation: announcement-bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes announcement-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+    
+    .announcement-main-title {
+        font-size: 36px;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 15px;
+        line-height: 1.2;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .announcement-highlight {
+        color: #c8ff00;
+        text-shadow: 0 0 10px rgba(200, 255, 0, 0.5);
+    }
+    
+    .announcement-subtitle {
+        font-size: 18px;
+        color: #b0c4de;
+        margin-bottom: 25px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .announcement-cta-box {
+        background: rgba(200, 255, 0, 0.1);
+        border: 2px solid #c8ff00;
+        border-radius: 20px;
+        padding: 25px;
+        margin: 25px 0;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .announcement-cta-title {
+        font-size: 24px;
+        color: #c8ff00;
+        font-weight: bold;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+    
+    .announcement-cta-text {
+        font-size: 18px;
+        color: #fff;
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 8px;
+    }
+    
+    .announcement-warning-box {
+        background: linear-gradient(135deg, #ff3b3b 0%, #ff6b6b 100%);
+        padding: 18px;
+        border-radius: 15px;
+        margin-top: 20px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 5px 20px rgba(255, 59, 59, 0.3);
+    }
+    
+    .announcement-warning-icon {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
+    
+    .announcement-warning-text {
+        color: #fff;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    .announcement-url-box {
+        background: rgba(10, 22, 40, 0.8);
+        padding: 18px;
+        border-radius: 15px;
+        margin-top: 20px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .announcement-url-label {
+        color: #c8ff00;
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        letter-spacing: 2px;
+    }
+    
+    .announcement-url-text {
+        color: #fff;
+        font-size: 16px;
+        word-break: break-all;
+        background: rgba(200, 255, 0, 0.1);
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(200, 255, 0, 0.3);
+    }
+    
+    .announcement-arrow {
+        text-align: center;
+        font-size: 40px;
+        color: #c8ff00;
+        margin: 15px 0;
+        animation: announcement-arrow-bounce 1.5s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @keyframes announcement-arrow-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(12px); }
+    }
+    
+    .click-hint {
+        text-align: center;
+        color: #c8ff00;
+        font-size: 14px;
+        margin-top: 15px;
+        animation: announcement-bounce 2s ease-in-out infinite;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .announcement-card {
+            padding: 25px;
+        }
+        
+        .announcement-logo-text {
+            font-size: 32px;
+        }
+        
+        .announcement-main-title {
+            font-size: 28px;
+        }
+        
+        .announcement-subtitle {
+            font-size: 16px;
+        }
+        
+        .announcement-cta-title {
+            font-size: 20px;
+        }
+        
+        .announcement-cta-text {
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="new-platform-section">
+    <div class="announcement-card" onclick="window.open('https://spin-track-reserve.vercel.app/booking', '_blank')">
+        <div class="announcement-logo">
+            <div class="announcement-logo-text">PROVIDA</div>
+            <div class="announcement-logo-subtitle">FITNESS</div>
         </div>
-        <p class="video-caption">💪 Experience an unforgettable ride with Kristina Girod, the Master of Spinning. Elite training, explosive energy, and limitless motivation.</p>
+        
+        <div style="text-align: center;">
+            <span class="announcement-badge">🚀 NEW BOOKING SYSTEM</span>
+        </div>
+        
+        <h2 class="announcement-main-title">
+            Switch to Our <span class="announcement-highlight">New Platform</span>
+        </h2>
+        
+        <p class="announcement-subtitle">
+            Enhanced experience • Faster booking • Better interface
+        </p>
+        
+        <div class="announcement-cta-box">
+            <div class="announcement-cta-title">📅 ACTION REQUIRED</div>
+            <div class="announcement-cta-text">
+                <strong>Register NOW</strong> so you can purchase your seats<br>
+                this <strong>Sunday at 10:00 AM</strong> for next week's classes
+            </div>
+        </div>
+        
+        <div class="announcement-arrow">⬇</div>
+        
+        <div class="announcement-warning-box">
+            <div class="announcement-warning-icon">⚠️</div>
+            <div class="announcement-warning-text">
+                DO NOT BOOK FOR THIS WEEK<br>
+                Wait until Sunday for next week's schedule
+            </div>
+        </div>
+        
+        <div class="announcement-url-box">
+            <div class="announcement-url-label">NEW BOOKING URL</div>
+            <div class="announcement-url-text">
+                spin-track-reserve.vercel.app/booking
+            </div>
+        </div>
+        
+        <div class="click-hint">
+            👆 Click anywhere on this card to visit the new platform
+        </div>
     </div>
-    <!-- ===== FIN SECCIÓN DE VIDEO ===== -->
+</div>
+<!-- ===== FIN SECCIÓN ANUNCIO NUEVA PLATAFORMA ===== -->
 
 
     <!-- Condiciones del servicio -->
