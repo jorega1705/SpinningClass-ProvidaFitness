@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Variables globales
     let isAdmin = false;
-    let currentDay = "martes"; // Día por defecto
+    let currentDay = "lunes"; // Día por defecto
     let currentTime = "18:00"; // Hora por defecto
     
     // Función para obtener la referencia al documento de asientos del día seleccionado
@@ -302,17 +302,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".seat").forEach(seat => {
         const seatNumber = seat.getAttribute("data-seat");
 
-        // Mostrar solo A, B y C si es viernes a las 08:00
-        if (currentDay === "viernes" && currentTime === "09:00") {
-            if (!/^A|^B|^C/.test(seatNumber)) {
-                seat.style.display = "none";
-                return;
-            } else {
-                seat.style.display = "block";
-            }
-        } else {
-            seat.style.display = "block"; // Mostrar todas en otros días
-        }
+        // Mostrar todos los asientos para todas las clases
+    seat.style.display = "block";
 
         // Mostrar estado (reservado o disponible)
         if (seatsData[seatNumber]) {
